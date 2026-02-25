@@ -38,7 +38,6 @@
 		}
 	},
 	"files": {
-		"includes": ["src/**", "*.ts", "*.json", "*.md"],
-		"excludes": ["demo/**"]
+		"includes": ["src/**", "*.ts", "*.json", "*.md"]
 	}
 }
