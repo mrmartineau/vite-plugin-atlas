@@ -1,146 +1,194 @@
-import path from 'node:path';
-import type { Plugin, ViteDevServer } from 'vite';
-import { handleApiRequest } from '../api/routes.js';
-import type { AtlasComponentEntry, AtlasConfig, ResolvedAtlasConfig } from '../types/index.js';
-import { resolveConfig } from './config.js';
-import { discoverExamples } from './discovery.js';
-import { getUiDir, loadVirtualModule, resolveVirtualModuleId } from './virtual-modules.js';
+import path from 'node:path'
+import type { Plugin, ViteDevServer } from 'vite'
+import { handleApiRequest } from '../api/routes.js'
+import type {
+  AtlasComponentEntry,
+  AtlasConfig,
+  ResolvedAtlasConfig,
+} from '../types/index.js'
+import { resolveConfig } from './config.js'
+import { discoverExamples } from './discovery.js'
+import {
+  getUiDir,
+  loadVirtualModule,
+  resolveVirtualModuleId,
+} from './virtual-modules.js'
 
 export default function atlas(userConfig: AtlasConfig = {}): Plugin[] {
-	let config: ResolvedAtlasConfig;
-	let root: string;
-	let manifest: AtlasComponentEntry[] = [];
-	const uiDir = getUiDir();
+  let config: ResolvedAtlasConfig
+  let root: string
+  let manifest: AtlasComponentEntry[] = []
+  const uiDir = getUiDir()
 
-	async function rebuildManifest() {
-		manifest = await discoverExamples(root, config);
-	}
+  async function rebuildManifest() {
+    manifest = await discoverExamples(root, config)
+  }
 
-	const mainPlugin: Plugin = {
-		name: 'atlas',
-		enforce: 'pre',
+  const mainPlugin: Plugin = {
+    name: 'atlas',
+    enforce: 'pre',
 
-		configResolved(resolved) {
-			root = resolved.root;
-			config = resolveConfig(userConfig, resolved);
-		},
+    configResolved(resolved) {
+      root = resolved.root
+      config = resolveConfig(userConfig, resolved)
+    },
 
-		async buildStart() {
-			await rebuildManifest();
-			if (manifest.length > 0) {
-				console.log(`[atlas] Discovered ${manifest.length} component(s)`);
-			}
-		},
+    async buildStart() {
+      await rebuildManifest()
+      if (manifest.length > 0) {
+        console.log(`[atlas] Discovered ${manifest.length} component(s)`)
+      }
+    },
 
-		configureServer(server: ViteDevServer) {
-			server.watcher.on('add', async (file) => {
-				const rel = path.relative(root, file);
-				if (isExamplesFile(rel)) {
-					await rebuildManifest();
-					invalidateVirtualModules(server);
-				}
-			});
+    configureServer(server: ViteDevServer) {
+      server.watcher.on('add', async (file) => {
+        const rel = path.relative(root, file)
+        if (isExamplesFile(rel)) {
+          await rebuildManifest()
+          invalidateVirtualModules(server)
+        }
+      })
 
-			server.watcher.on('unlink', async (file) => {
-				const rel = path.relative(root, file);
-				if (isExamplesFile(rel)) {
-					await rebuildManifest();
-					invalidateVirtualModules(server);
-				}
-			});
+      server.watcher.on('unlink', async (file) => {
+        const rel = path.relative(root, file)
+        if (isExamplesFile(rel)) {
+          await rebuildManifest()
+          invalidateVirtualModules(server)
+        }
+      })
 
-			server.middlewares.use(async (req, res, next) => {
-				const url = req.url || '';
-				const pathname = url.split('?')[0];
+      server.middlewares.use(async (req, res, next) => {
+        const url = req.url || ''
+        const pathname = url.split('?')[0]
 
-				if (!pathname.startsWith(config.route)) {
-					return next();
-				}
+        if (!pathname.startsWith(config.route)) {
+          return next()
+        }
 
-				const atlasPath = pathname.slice(config.route.length) || '/';
+        const atlasPath = pathname.slice(config.route.length) || '/'
 
-				if (atlasPath.startsWith('/api/')) {
-					try {
-						const handled = await handleApiRequest(req, res, atlasPath, manifest, root, config);
-						if (handled) return;
-					} catch (err) {
-						console.error('[atlas] API error:', err);
-						res.writeHead(500, { 'Content-Type': 'application/json' });
-						res.end(JSON.stringify({ error: 'Internal server error' }));
-						return;
-					}
-				}
+        if (atlasPath.startsWith('/api/')) {
+          try {
+            const handled = await handleApiRequest(
+              req,
+              res,
+              atlasPath,
+              manifest,
+              root,
+              config,
+            )
+            if (handled) return
+          } catch (err) {
+            console.error('[atlas] API error:', err)
+            res.writeHead(500, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ error: 'Internal server error' }))
+            return
+          }
+        }
 
-				const html = `<!DOCTYPE html>
+        const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${config.title}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap" rel="stylesheet" />
+  <style>html, body { margin: 0; padding: 0; }</style>
 </head>
 <body>
   <div id="atlas-root"></div>
   <script type="module" src="/@id/__x00__virtual:atlas-ui-entry"></script>
 </body>
-</html>`;
+</html>`
 
-				const transformedHtml = await server.transformIndexHtml(pathname, html);
-				res.writeHead(200, { 'Content-Type': 'text/html' });
-				res.end(transformedHtml);
-			});
-		},
+        const transformedHtml = await server.transformIndexHtml(pathname, html)
+        res.writeHead(200, { 'Content-Type': 'text/html' })
+        res.end(transformedHtml)
+      })
+    },
 
-		resolveId(id) {
-			return resolveVirtualModuleId(id, uiDir);
-		},
+    resolveId(id) {
+      return resolveVirtualModuleId(id, uiDir)
+    },
 
-		async load(id) {
-			if (!id.startsWith('\0virtual:atlas-')) return;
-			return loadVirtualModule(id, manifest, root, config);
-		},
+    async load(id) {
+      if (!id.startsWith('\0virtual:atlas-')) return
+      return loadVirtualModule(id, manifest, root, config)
+    },
 
-		async handleHotUpdate(ctx) {
-			const rel = path.relative(root, ctx.file);
-			if (!isExamplesFile(rel)) return;
+    async handleHotUpdate(ctx) {
+      const rel = path.relative(root, ctx.file)
 
-			await rebuildManifest();
+      // Handle docs file changes
+      if (isDocsFile(rel)) {
+        const entry = manifest.find((e) => e.docsFile === rel)
+        if (!entry) return
 
-			const entry = manifest.find((e) => e.examplesFile === rel);
-			if (!entry) return;
+        const docsModuleId = `\0virtual:atlas-docs/${entry.slug}`
+        const mod = ctx.server.moduleGraph.getModuleById(docsModuleId)
+        if (mod) {
+          ctx.server.moduleGraph.invalidateModule(mod)
+          // biome-ignore lint/suspicious/noExplicitAny: Vite's ModuleNode[] typing is complex
+          return [...(ctx.modules || []), mod] as any
+        }
+        return
+      }
 
-			const sourceModuleId = `\0virtual:atlas-source/${entry.slug}`;
-			const propsModuleId = `\0virtual:atlas-props/${entry.slug}`;
-			const manifestModuleId = '\0virtual:atlas-manifest';
+      if (!isExamplesFile(rel)) return
 
-			const modulesToInvalidate = [sourceModuleId, propsModuleId, manifestModuleId]
-				.map((id) => ctx.server.moduleGraph.getModuleById(id))
-				.filter(Boolean);
+      await rebuildManifest()
 
-			for (const mod of modulesToInvalidate) {
-				if (mod) {
-					ctx.server.moduleGraph.invalidateModule(mod);
-				}
-			}
+      const entry = manifest.find((e) => e.examplesFile === rel)
+      if (!entry) return
 
-			// biome-ignore lint/suspicious/noExplicitAny: Vite's ModuleNode[] typing is complex
-			return [...(ctx.modules || []), ...modulesToInvalidate.filter(Boolean)] as any;
-		},
-	};
+      const sourceModuleId = `\0virtual:atlas-source/${entry.slug}`
+      const propsModuleId = `\0virtual:atlas-props/${entry.slug}`
+      const manifestModuleId = '\0virtual:atlas-manifest'
 
-	return [mainPlugin];
+      const modulesToInvalidate = [
+        sourceModuleId,
+        propsModuleId,
+        manifestModuleId,
+      ]
+        .map((id) => ctx.server.moduleGraph.getModuleById(id))
+        .filter(Boolean)
+
+      for (const mod of modulesToInvalidate) {
+        if (mod) {
+          ctx.server.moduleGraph.invalidateModule(mod)
+        }
+      }
+
+      // biome-ignore lint/suspicious/noExplicitAny: Vite's ModuleNode[] typing is complex
+      return [
+        ...(ctx.modules || []),
+        ...modulesToInvalidate.filter(Boolean),
+      ] as any
+    },
+  }
+
+  return [mainPlugin]
 }
 
 function isExamplesFile(relativePath: string): boolean {
-	return /\.examples\.(tsx|jsx|ts|js)$/.test(relativePath);
+  return /\.examples\.(tsx|jsx|ts|js)$/.test(relativePath)
+}
+
+function isDocsFile(relativePath: string): boolean {
+  return /\.(md|mdx)$/.test(relativePath)
 }
 
 function invalidateVirtualModules(server: ViteDevServer) {
-	const manifestModule = server.moduleGraph.getModuleById('\0virtual:atlas-manifest');
-	if (manifestModule) {
-		server.moduleGraph.invalidateModule(manifestModule);
-	}
+  const manifestModule = server.moduleGraph.getModuleById(
+    '\0virtual:atlas-manifest',
+  )
+  if (manifestModule) {
+    server.moduleGraph.invalidateModule(manifestModule)
+  }
 
-	server.ws.send({ type: 'full-reload' });
+  server.ws.send({ type: 'full-reload' })
 }
 
-export type { AtlasConfig } from '../types/index.js';
+export type { AtlasConfig } from '../types/index.js'

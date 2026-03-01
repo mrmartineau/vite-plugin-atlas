@@ -1,12 +1,15 @@
-import { createServer } from 'vite';
-import { resolveConfig } from '../plugin/config.js';
-import { discoverExamples } from '../plugin/discovery.js';
-import type { AtlasComponentEntry, ResolvedAtlasConfig } from '../types/index.js';
+import { createServer } from 'vite'
+import { resolveConfig } from '../plugin/config.js'
+import { discoverExamples } from '../plugin/discovery.js'
+import type {
+  AtlasComponentEntry,
+  ResolvedAtlasConfig,
+} from '../types/index.js'
 
 export interface AtlasContext {
-	root: string;
-	config: ResolvedAtlasConfig;
-	manifest: AtlasComponentEntry[];
+  root: string
+  config: ResolvedAtlasConfig
+  manifest: AtlasComponentEntry[]
 }
 
 /**
@@ -14,26 +17,26 @@ export interface AtlasContext {
  * extract Atlas plugin options, and discover example files.
  */
 export async function bootAtlas(cwd?: string): Promise<AtlasContext> {
-	const root = cwd || process.cwd();
+  const root = cwd || process.cwd()
 
-	// Create a minimal Vite server to resolve config
-	const server = await createServer({
-		root,
-		server: { middlewareMode: true },
-		logLevel: 'silent',
-	});
+  // Create a minimal Vite server to resolve config
+  const server = await createServer({
+    root,
+    server: { middlewareMode: true },
+    logLevel: 'silent',
+  })
 
-	// Find the Atlas plugin config from the resolved Vite config
-	const viteConfig = server.config;
+  // Find the Atlas plugin config from the resolved Vite config
+  const viteConfig = server.config
 
-	// Resolve Atlas config using Vite's resolved aliases
-	const config = resolveConfig({}, viteConfig);
+  // Resolve Atlas config using Vite's resolved aliases
+  const config = resolveConfig({}, viteConfig)
 
-	// Close the server — we only needed it for config resolution
-	await server.close();
+  // Close the server — we only needed it for config resolution
+  await server.close()
 
-	// Discover example files
-	const manifest = await discoverExamples(root, config);
+  // Discover example files
+  const manifest = await discoverExamples(root, config)
 
-	return { root, config, manifest };
+  return { root, config, manifest }
 }

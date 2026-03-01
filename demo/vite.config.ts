@@ -8,6 +8,7 @@ export default defineConfig({
     atlas({
       pattern: 'src/**/*.examples.{tsx,jsx}',
       title: 'Atlas Demo',
+      importPackage: '@mrmartineau/react-components',
     }),
   ],
 })

@@ -1,11 +1,15 @@
 import { useState } from 'react';
+import type { AtlasExample } from 'vite-plugin-atlas/types';
 import { Input } from './Input';
 
-export const Default = () => <Input label="Name" placeholder="Enter your name" />;
+export const Default: AtlasExample = () => <Input label="Name" placeholder="Enter your name" />;
+Default.description = 'A basic text input with a label and placeholder.';
 
-export const WithError = () => <Input label="Email" type="email" value="not-an-email" error="Please enter a valid email address" />;
+export const WithError: AtlasExample = () => <Input label="Email" type="email" value="not-an-email" error="Please enter a valid email address" />;
+WithError.description = 'Inputs display an inline error message when validation fails.';
 
-export const Disabled = () => <Input label="Username" value="locked-user" disabled />;
+export const Disabled: AtlasExample = () => <Input label="Username" value="locked-user" disabled />;
+Disabled.description = 'Disabled inputs are visually dimmed and prevent interaction.';
 
 export const Controlled = () => {
   const [value, setValue] = useState('');
