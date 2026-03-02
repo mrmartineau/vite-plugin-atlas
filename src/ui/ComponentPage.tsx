@@ -9,8 +9,6 @@ import {
   WarningIcon,
 } from '@phosphor-icons/react'
 import {
-  type ComponentType,
-  type ReactNode,
   useCallback,
   useEffect,
   useMemo,
@@ -35,19 +33,16 @@ const aiTools = [
 
 interface ComponentPageProps {
   entry: AtlasComponentEntry
-  wrapper?: ComponentType<{ children: ReactNode }> | null
 }
 
 interface LoadedExample {
   name: string
-  component: () => ReactNode
   title?: string
   description?: string
-  exampleWrapper?: ComponentType<{ children: ReactNode }>
   order?: number
 }
 
-export function ComponentPage({ entry, wrapper }: ComponentPageProps) {
+export function ComponentPage({ entry }: ComponentPageProps) {
   const [examples, setExamples] = useState<LoadedExample[]>([])
   const [sources, setSources] = useState<Record<string, string>>({})
   const [highlightedSources, setHighlightedSources] = useState<
@@ -88,10 +83,8 @@ export function ComponentPage({ entry, wrapper }: ComponentPageProps) {
           if (typeof ex === 'function') {
             loaded.push({
               name: exportName,
-              component: ex,
               title: ex.title,
               description: ex.description,
-              exampleWrapper: ex.wrapper,
               order: ex.order,
             })
           }
@@ -326,8 +319,7 @@ export function ComponentPage({ entry, wrapper }: ComponentPageProps) {
                 description={ex.description}
                 source={sources[ex.name]}
                 highlightedSource={highlightedSources[ex.name]}
-                component={ex.component}
-                wrapper={ex.exampleWrapper ?? wrapper}
+                examplesFile={entry.examplesFile}
               />
             ))}
           </section>

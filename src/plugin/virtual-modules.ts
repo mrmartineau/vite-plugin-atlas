@@ -53,6 +53,7 @@ export function resolveVirtualModuleId(
   if (id === 'virtual:atlas-manifest') return '\0virtual:atlas-manifest'
   if (id === 'virtual:atlas-config') return '\0virtual:atlas-config'
   if (id === 'virtual:atlas-ui-entry') return '\0virtual:atlas-ui-entry'
+  if (id === 'virtual:atlas-preview-entry') return '\0virtual:atlas-preview-entry'
 
   if (id.startsWith('virtual:atlas-source/')) return `\0${id}`
   if (id.startsWith('virtual:atlas-props/')) return `\0${id}`
@@ -86,6 +87,7 @@ export async function loadVirtualModule(
       route: config.route,
       title: config.title,
       wrapper: config.wrapper,
+      styles: config.styles,
     }
     return `export const config = ${JSON.stringify(configData, null, 2)};`
   }
@@ -101,6 +103,45 @@ export async function loadVirtualModule(
       `if (container) {`,
       `  const root = createRoot(container);`,
       `  root.render(createElement(App));`,
+      `}`,
+    ].join('\n')
+  }
+
+  if (virtualId === 'virtual:atlas-preview-entry') {
+    const styleImports = config.styles
+      .map((s) => `import '/${s}';`)
+      .join('\n')
+
+    return [
+      `import { createElement } from 'react';`,
+      `import { createRoot } from 'react-dom/client';`,
+      styleImports,
+      config.wrapper
+        ? `import GlobalWrapper from '${config.wrapper}';`
+        : `const GlobalWrapper = null;`,
+      ``,
+      `const params = new URLSearchParams(window.location.search);`,
+      `const file = params.get('file');`,
+      `const exportName = params.get('export');`,
+      ``,
+      `if (file && exportName) {`,
+      `  import(/* @vite-ignore */ '/' + file).then((mod) => {`,
+      `    const Component = mod[exportName];`,
+      `    if (typeof Component === 'function') {`,
+      `      const container = document.getElementById('atlas-preview-root');`,
+      `      if (container) {`,
+      `        const root = createRoot(container);`,
+      `        let el = createElement(Component);`,
+      `        const ExampleWrapper = Component.wrapper;`,
+      `        if (ExampleWrapper) {`,
+      `          el = createElement(ExampleWrapper, null, el);`,
+      `        } else if (GlobalWrapper) {`,
+      `          el = createElement(GlobalWrapper, null, el);`,
+      `        }`,
+      `        root.render(el);`,
+      `      }`,
+      `    }`,
+      `  });`,
       `}`,
     ].join('\n')
   }

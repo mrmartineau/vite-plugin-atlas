@@ -79,6 +79,7 @@ atlas({
   title: 'Atlas', // page title
   ignore: ['**/node_modules/**'], // globs to ignore
   wrapper: './src/providers/ThemeProvider.tsx', // global wrapper component (file path)
+  styles: ['src/index.css', 'src/tailwind.css'], // CSS files to load in component previews
   importPrefix: '@/components', // prefix for import statements in docs
   importPackage: '@mrmartineau/react-components', // npm package name for imports
 })

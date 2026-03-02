@@ -1,6 +1,5 @@
-import type { ComponentType, ReactNode } from 'react'
 import { CopyButton } from './CopyButton.js'
-import { ErrorBoundary } from './ErrorBoundary.js'
+import { IframePreview } from './IframePreview.js'
 import { deCamelCase } from './utils.js'
 
 interface ExampleCardProps {
@@ -9,8 +8,7 @@ interface ExampleCardProps {
   description?: string
   source?: string
   highlightedSource?: string
-  component: () => ReactNode
-  wrapper?: ComponentType<{ children: ReactNode }> | null
+  examplesFile: string
   id: string
 }
 
@@ -20,12 +18,10 @@ export function ExampleCard({
   description,
   source,
   highlightedSource,
-  component: ExampleComponent,
-  wrapper: Wrapper,
+  examplesFile,
   id,
 }: ExampleCardProps) {
   const displayTitle = title ?? deCamelCase(name)
-  const rendered = <ExampleComponent />
 
   return (
     <div className="atlas-example-card" id={id}>
@@ -36,9 +32,7 @@ export function ExampleCard({
         <p className="atlas-example-card__description">{description}</p>
       )}
       <div className="atlas-example-card__preview">
-        <ErrorBoundary>
-          {Wrapper ? <Wrapper>{rendered}</Wrapper> : rendered}
-        </ErrorBoundary>
+        <IframePreview file={examplesFile} exportName={name} />
       </div>
       {source && (
         <div className="atlas-example-card__source">
@@ -49,6 +43,7 @@ export function ExampleCard({
           {highlightedSource ? (
             <div
               className="atlas-example-card__code"
+              // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
               dangerouslySetInnerHTML={{ __html: highlightedSource }}
             />
           ) : (

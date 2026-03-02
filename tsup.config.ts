@@ -15,7 +15,7 @@ export default defineConfig([
     sourcemap: true,
     clean: true,
     target: 'node18',
-    external: ['vite', 'react', 'react-dom', 'typescript'],
+    external: ['vite', 'react', 'react-dom', 'typescript', /^virtual:atlas-/],
   },
   {
     entry: {

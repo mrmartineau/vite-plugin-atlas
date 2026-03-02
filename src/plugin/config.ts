@@ -23,6 +23,8 @@ export function resolveConfig(
 
   const wrapper = userConfig.wrapper ?? null
 
+  const styles = userConfig.styles ?? []
+
   let importPrefix: string | null = userConfig.importPrefix ?? null
 
   if (importPrefix === null && viteConfig?.resolve?.alias) {
@@ -53,5 +55,5 @@ export function resolveConfig(
 
   const importPackage = userConfig.importPackage ?? null
 
-  return { pattern, route, title, ignore, wrapper, importPrefix, importPackage }
+  return { pattern, route, title, ignore, wrapper, styles, importPrefix, importPackage }
 }

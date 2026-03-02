@@ -1,6 +1,6 @@
-import { type ReactNode, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { AtlasComponentEntry } from '../types/index.js'
-import { ErrorBoundary } from './ErrorBoundary.js'
+import { IframePreview } from './IframePreview.js'
 
 interface LazyPreviewProps {
   entry: AtlasComponentEntry
@@ -9,10 +9,6 @@ interface LazyPreviewProps {
 export function LazyPreview({ entry }: LazyPreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
-  const [ExampleComponent, setExampleComponent] = useState<
-    (() => ReactNode) | null
-  >(null)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const el = containerRef.current
@@ -31,29 +27,12 @@ export function LazyPreview({ entry }: LazyPreviewProps) {
     return () => observer.disconnect()
   }, [])
 
-  useEffect(() => {
-    if (!visible) return
-
-    import(/* @vite-ignore */ `/${entry.examplesFile}`)
-      .then((mod) => {
-        const firstExport = entry.exports[0]
-        if (firstExport && mod[firstExport]) {
-          setExampleComponent(() => mod[firstExport])
-        }
-      })
-      .catch((err) => {
-        setError(err.message)
-      })
-  }, [visible, entry])
+  const firstExport = entry.exports[0]
 
   return (
     <div ref={containerRef} className="atlas-card__preview">
-      {error ? (
-        <div className="atlas-card__preview-error">Failed to load preview</div>
-      ) : ExampleComponent ? (
-        <ErrorBoundary>
-          <ExampleComponent />
-        </ErrorBoundary>
+      {visible && firstExport ? (
+        <IframePreview file={entry.examplesFile} exportName={firstExport} />
       ) : visible ? (
         <div className="atlas-card__preview-loading">Loading…</div>
       ) : null}

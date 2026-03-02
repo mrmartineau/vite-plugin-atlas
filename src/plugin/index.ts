@@ -67,6 +67,35 @@ export default function atlas(userConfig: AtlasConfig = {}): Plugin[] {
 
         const atlasPath = pathname.slice(config.route.length) || '/'
 
+        if (atlasPath === '/preview') {
+          const previewHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>html, body { margin: 0; padding: 0; }</style>
+</head>
+<body>
+  <div id="atlas-preview-root"></div>
+  <script type="module" src="/@id/__x00__virtual:atlas-preview-entry"></script>
+  <script>
+    const ro = new ResizeObserver(() => {
+      window.parent.postMessage({ type: 'atlas-preview-resize', height: document.documentElement.scrollHeight }, '*');
+    });
+    ro.observe(document.body);
+  </script>
+</body>
+</html>`
+
+          const transformedPreviewHtml = await server.transformIndexHtml(
+            pathname + '?' + (req.url?.split('?')[1] || ''),
+            previewHtml,
+          )
+          res.writeHead(200, { 'Content-Type': 'text/html' })
+          res.end(transformedPreviewHtml)
+          return
+        }
+
         if (atlasPath.startsWith('/api/')) {
           try {
             const handled = await handleApiRequest(

@@ -31,6 +31,8 @@ export interface AtlasConfig {
   title?: string
   ignore?: string[]
   wrapper?: string
+  /** CSS files to inject into component previews (e.g., your app's global styles). Paths are relative to project root. */
+  styles?: string[]
   importPrefix?: string
   /** Rewrite relative imports to an npm package path. Accepts a string (replaces all) or a function for custom mapping. */
   importPackage?:
@@ -45,6 +47,7 @@ export interface ResolvedAtlasConfig {
   title: string
   ignore: string[]
   wrapper: string | null
+  styles: string[]
   importPrefix: string | null
   importPackage:
     | string

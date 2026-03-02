@@ -1,7 +1,7 @@
 import { config } from 'virtual:atlas-config'
 import { manifest } from 'virtual:atlas-manifest'
 import { ArrowLeftIcon } from '@phosphor-icons/react'
-import { type ComponentType, type ReactNode, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ComponentPage } from './ComponentPage.js'
 import { IndexPage } from './IndexPage.js'
 
@@ -15,9 +15,6 @@ function parseHash(): { slug: string | null } {
 
 export function App() {
   const [route, setRoute] = useState(parseHash)
-  const [Wrapper, setWrapper] = useState<ComponentType<{
-    children: ReactNode
-  }> | null>(null)
 
   useEffect(() => {
     const onHashChange = () => {
@@ -26,18 +23,6 @@ export function App() {
     }
     window.addEventListener('hashchange', onHashChange)
     return () => window.removeEventListener('hashchange', onHashChange)
-  }, [])
-
-  useEffect(() => {
-    if (!config.wrapper) return
-    import(/* @vite-ignore */ config.wrapper)
-      .then((mod) => {
-        const W = mod.default || mod[Object.keys(mod)[0]]
-        if (W) setWrapper(() => W)
-      })
-      .catch((err) => {
-        console.error('[Atlas] Failed to load wrapper:', err)
-      })
   }, [])
 
   const entry = route.slug ? manifest.find((e) => e.slug === route.slug) : null
@@ -75,7 +60,7 @@ export function App() {
       </header>
       <main className="atlas-main">
         {entry ? (
-          <ComponentPage entry={entry} wrapper={Wrapper} />
+          <ComponentPage entry={entry} />
         ) : (
           <IndexPage manifest={manifest} title={config.title} />
         )}

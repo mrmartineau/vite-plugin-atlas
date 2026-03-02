@@ -4,7 +4,7 @@ declare module 'virtual:atlas-manifest' {
 }
 
 declare module 'virtual:atlas-config' {
-  export const config: { route: string; title: string; wrapper: string | null }
+  export const config: { route: string; title: string; wrapper: string | null; styles: string[] }
 }
 
 declare module 'virtual:atlas-source/*' {
