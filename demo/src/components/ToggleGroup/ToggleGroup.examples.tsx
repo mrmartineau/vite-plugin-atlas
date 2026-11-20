@@ -1,5 +1,5 @@
-import type { AtlasExample } from 'vite-plugin-atlas/types';
-import { ToggleGroup } from 'vite-plugin-atlas/components';
+import { ToggleGroup } from 'vite-plugin-atlas/components'
+import type { AtlasExample } from 'vite-plugin-atlas/types'
 
 export const Expanded: AtlasExample = () => (
   <ToggleGroup label="Section Title" count={3}>
@@ -7,8 +7,8 @@ export const Expanded: AtlasExample = () => (
       <p>Content inside the toggle group.</p>
     </div>
   </ToggleGroup>
-);
-Expanded.description = 'A toggle group that starts expanded by default.';
+)
+Expanded.description = 'A toggle group that starts expanded by default.'
 
 export const Collapsed: AtlasExample = () => (
   <ToggleGroup label="Collapsed Section" count={5} defaultCollapsed>
@@ -16,8 +16,8 @@ export const Collapsed: AtlasExample = () => (
       <p>This content is hidden until the group is toggled open.</p>
     </div>
   </ToggleGroup>
-);
-Collapsed.description = 'A toggle group that starts in a collapsed state.';
+)
+Collapsed.description = 'A toggle group that starts in a collapsed state.'
 
 export const WithoutCount: AtlasExample = () => (
   <ToggleGroup label="No Count">
@@ -25,5 +25,5 @@ export const WithoutCount: AtlasExample = () => (
       <p>A toggle group without a count badge.</p>
     </div>
   </ToggleGroup>
-);
-WithoutCount.description = 'Toggle group without the optional count indicator.';
+)
+WithoutCount.description = 'Toggle group without the optional count indicator.'

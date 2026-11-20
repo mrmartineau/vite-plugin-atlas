@@ -2,10 +2,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createHighlighter, type Highlighter } from 'shiki'
-import type {
-  AtlasComponentEntry,
-  ResolvedAtlasConfig,
-} from '../types/index.js'
+import type { AtlasComponentEntry, ResolvedAtlasConfig } from '../types/index.js'
 import { extractProps } from './props-extractor.js'
 import { extractSources } from './source-extractor.js'
 
@@ -46,10 +43,7 @@ const UI_PREFIX = 'virtual:atlas-ui/'
 /**
  * Check if an ID is an Atlas virtual module and return the resolved ID.
  */
-export function resolveVirtualModuleId(
-  id: string,
-  uiDir?: string,
-): string | null {
+export function resolveVirtualModuleId(id: string, uiDir?: string): string | null {
   if (id === 'virtual:atlas-manifest') return '\0virtual:atlas-manifest'
   if (id === 'virtual:atlas-config') return '\0virtual:atlas-config'
   if (id === 'virtual:atlas-ui-entry') return '\0virtual:atlas-ui-entry'
@@ -108,9 +102,7 @@ export async function loadVirtualModule(
   }
 
   if (virtualId === 'virtual:atlas-preview-entry') {
-    const styleImports = config.styles
-      .map((s) => `import '/${s}';`)
-      .join('\n')
+    const styleImports = config.styles.map((s) => `import '/${s}';`).join('\n')
 
     return [
       `import { createElement } from 'react';`,
@@ -171,9 +163,7 @@ export async function loadVirtualModule(
     for (const [name, source] of Object.entries(result.sources)) {
       highlightedSources[name] = await highlight(source)
     }
-    const highlightedImports = result.imports
-      ? await highlight(result.imports)
-      : ''
+    const highlightedImports = result.imports ? await highlight(result.imports) : ''
 
     return [
       `export const sources = ${JSON.stringify(result.sources, null, 2)};`,
@@ -274,9 +264,7 @@ function markdownToHtml(md: string): string {
     if (/^\d+\.\s+/.test(line)) {
       const items: string[] = []
       while (i < lines.length && /^\d+\.\s+/.test(lines[i])) {
-        items.push(
-          `<li>${inlineFormat(lines[i].replace(/^\d+\.\s+/, ''))}</li>`,
-        )
+        items.push(`<li>${inlineFormat(lines[i].replace(/^\d+\.\s+/, ''))}</li>`)
         i++
       }
       out.push(`<ol>${items.join('')}</ol>`)

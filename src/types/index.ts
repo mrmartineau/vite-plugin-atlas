@@ -12,10 +12,7 @@ export interface AtlasExampleMeta {
 export type AtlasExample = (() => ReactNode) & AtlasExampleMeta
 
 /** Zero-overhead utility that attaches metadata to an example function */
-export function example(
-  fn: () => ReactNode,
-  meta: AtlasExampleMeta,
-): AtlasExample {
+export function example(fn: () => ReactNode, meta: AtlasExampleMeta): AtlasExample {
   const ex = fn as AtlasExample
   if (meta.title !== undefined) ex.title = meta.title
   if (meta.description !== undefined) ex.description = meta.description
@@ -35,9 +32,7 @@ export interface AtlasConfig {
   styles?: string[]
   importPrefix?: string
   /** Rewrite relative imports to an npm package path. Accepts a string (replaces all) or a function for custom mapping. */
-  importPackage?:
-    | string
-    | ((importPath: string, examplesFile: string) => string)
+  importPackage?: string | ((importPath: string, examplesFile: string) => string)
 }
 
 /** Resolved internal config with defaults applied */
@@ -49,10 +44,7 @@ export interface ResolvedAtlasConfig {
   wrapper: string | null
   styles: string[]
   importPrefix: string | null
-  importPackage:
-    | string
-    | ((importPath: string, examplesFile: string) => string)
-    | null
+  importPackage: string | ((importPath: string, examplesFile: string) => string) | null
 }
 
 /** A discovered component entry in the manifest */

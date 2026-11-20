@@ -1,7 +1,7 @@
-import { config } from 'virtual:atlas-config'
-import { manifest } from 'virtual:atlas-manifest'
 import { ArrowLeftIcon } from '@phosphor-icons/react'
 import { useEffect, useState } from 'react'
+import { config } from 'virtual:atlas-config'
+import { manifest } from 'virtual:atlas-manifest'
 import { ComponentPage } from './ComponentPage.js'
 import { IndexPage } from './IndexPage.js'
 
@@ -54,9 +54,7 @@ export function App() {
         <a href="#/" className="atlas-header__title">
           {config.title}
         </a>
-        <span className="atlas-header__count">
-          {manifest.length} components
-        </span>
+        <span className="atlas-header__count">{manifest.length} components</span>
       </header>
       <main className="atlas-main">
         {entry ? (

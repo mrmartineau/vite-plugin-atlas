@@ -21,8 +21,6 @@ export function runList(ctx: AtlasContext): void {
 
   for (const entry of sorted) {
     const n = entry.exports.length
-    console.log(
-      `${entry.group}/${entry.name} (${n} example${n === 1 ? '' : 's'})`,
-    )
+    console.log(`${entry.group}/${entry.name} (${n} example${n === 1 ? '' : 's'})`)
   }
 }

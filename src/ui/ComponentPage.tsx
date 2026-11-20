@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/security/noDangerouslySetInnerHtml: it's ok for our purpose */
-import { config } from 'virtual:atlas-config'
 import {
   ArrowLeftIcon,
   ArticleIcon,
@@ -8,13 +6,9 @@ import {
   DownloadSimpleIcon,
   WarningIcon,
 } from '@phosphor-icons/react'
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+/* oxlint-disable react/no-danger -- it's ok for our purpose */
+import { config } from 'virtual:atlas-config'
 import type { AtlasComponentEntry, AtlasProp } from '../types/index.js'
 import { CopyButton } from './CopyButton.js'
 import { ExampleCard } from './ExampleCard.js'
@@ -45,9 +39,7 @@ interface LoadedExample {
 export function ComponentPage({ entry }: ComponentPageProps) {
   const [examples, setExamples] = useState<LoadedExample[]>([])
   const [sources, setSources] = useState<Record<string, string>>({})
-  const [highlightedSources, setHighlightedSources] = useState<
-    Record<string, string>
-  >({})
+  const [highlightedSources, setHighlightedSources] = useState<Record<string, string>>({})
   const [imports, setImports] = useState('')
   const [highlightedImports, setHighlightedImports] = useState('')
   const [docs, setDocs] = useState('')
@@ -68,12 +60,8 @@ export function ComponentPage({ entry }: ComponentPageProps) {
 
     Promise.all([
       import(/* @vite-ignore */ `/${entry.examplesFile}`),
-      import(
-        /* @vite-ignore */ `/@id/__x00__virtual:atlas-source/${entry.slug}`
-      ),
-      import(
-        /* @vite-ignore */ `/@id/__x00__virtual:atlas-props/${entry.slug}`
-      ),
+      import(/* @vite-ignore */ `/@id/__x00__virtual:atlas-source/${entry.slug}`),
+      import(/* @vite-ignore */ `/@id/__x00__virtual:atlas-props/${entry.slug}`),
       import(/* @vite-ignore */ `/@id/__x00__virtual:atlas-docs/${entry.slug}`),
     ])
       .then(([examplesMod, sourceMod, propsMod, docsMod]) => {
@@ -253,18 +241,10 @@ export function ComponentPage({ entry }: ComponentPageProps) {
             >
               <ArticleIcon size={14} weight="duotone" /> View Markdown
             </a>
-            <button
-              type="button"
-              className="atlas-btn"
-              onClick={handleDownloadAI}
-            >
+            <button type="button" className="atlas-btn" onClick={handleDownloadAI}>
               <DownloadSimpleIcon size={14} weight="duotone" /> Download Docs
             </button>
-            <button
-              type="button"
-              className="atlas-btn"
-              onClick={handleCopyPage}
-            >
+            <button type="button" className="atlas-btn" onClick={handleCopyPage}>
               {pageCopied ? (
                 <CheckIcon size={14} weight="duotone" />
               ) : (

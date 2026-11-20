@@ -8,11 +8,7 @@ interface SearchBarProps {
 export function SearchBar({ value, onChange }: SearchBarProps) {
   return (
     <div className="atlas-search">
-      <MagnifyingGlassIcon
-        size={16}
-        className="atlas-search__icon"
-        weight="duotone"
-      />
+      <MagnifyingGlassIcon size={16} className="atlas-search__icon" weight="duotone" />
       <input
         className="atlas-search__input"
         type="text"

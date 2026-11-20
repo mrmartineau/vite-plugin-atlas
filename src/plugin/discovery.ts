@@ -2,10 +2,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { glob } from 'tinyglobby'
 import ts from 'typescript'
-import type {
-  AtlasComponentEntry,
-  ResolvedAtlasConfig,
-} from '../types/index.js'
+import type { AtlasComponentEntry, ResolvedAtlasConfig } from '../types/index.js'
 
 /**
  * Extract the static prefix from a glob pattern (everything before the first wildcard or `{`).
@@ -48,8 +45,7 @@ export function generateSlug(filePath: string, patterns: string[]): string {
   // If the last segment equals the parent segment (case-insensitive), collapse
   if (
     segments.length >= 2 &&
-    segments[segments.length - 1].toLowerCase() ===
-      segments[segments.length - 2].toLowerCase()
+    segments[segments.length - 1].toLowerCase() === segments[segments.length - 2].toLowerCase()
   ) {
     segments.pop()
   }
@@ -105,16 +101,8 @@ export function deriveGroup(filePath: string, patterns: string[]): string {
 /**
  * Look for documentation files co-located with the component.
  */
-export async function findDocsFile(
-  dir: string,
-  componentName: string,
-): Promise<string | null> {
-  const candidates = [
-    `${componentName}.mdx`,
-    `${componentName}.md`,
-    'README.mdx',
-    'README.md',
-  ]
+export async function findDocsFile(dir: string, componentName: string): Promise<string | null> {
+  const candidates = [`${componentName}.mdx`, `${componentName}.md`, 'README.mdx', 'README.md']
 
   for (const candidate of candidates) {
     const fullPath = path.join(dir, candidate)
@@ -138,20 +126,14 @@ function extractExportNames(filePath: string, content: string): string[] {
     content,
     ts.ScriptTarget.Latest,
     true,
-    filePath.endsWith('.tsx') || filePath.endsWith('.jsx')
-      ? ts.ScriptKind.TSX
-      : ts.ScriptKind.TS,
+    filePath.endsWith('.tsx') || filePath.endsWith('.jsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
   )
 
   const exports: string[] = []
 
   for (const statement of sourceFile.statements) {
-    const modifiers = ts.canHaveModifiers(statement)
-      ? ts.getModifiers(statement)
-      : undefined
-    const isExported = modifiers?.some(
-      (m) => m.kind === ts.SyntaxKind.ExportKeyword,
-    )
+    const modifiers = ts.canHaveModifiers(statement) ? ts.getModifiers(statement) : undefined
+    const isExported = modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword)
 
     if (!isExported) continue
 

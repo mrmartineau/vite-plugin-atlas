@@ -1,10 +1,7 @@
 import { createServer } from 'vite'
 import { resolveConfig } from '../plugin/config.js'
 import { discoverExamples } from '../plugin/discovery.js'
-import type {
-  AtlasComponentEntry,
-  ResolvedAtlasConfig,
-} from '../types/index.js'
+import type { AtlasComponentEntry, ResolvedAtlasConfig } from '../types/index.js'
 
 export interface AtlasContext {
   root: string

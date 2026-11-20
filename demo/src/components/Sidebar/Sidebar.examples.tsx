@@ -1,5 +1,5 @@
-import type { AtlasExample } from 'vite-plugin-atlas/types';
-import { Sidebar } from 'vite-plugin-atlas/components';
+import { Sidebar } from 'vite-plugin-atlas/components'
+import type { AtlasExample } from 'vite-plugin-atlas/types'
 
 export const Default: AtlasExample = () => (
   <Sidebar
@@ -10,5 +10,5 @@ export const Default: AtlasExample = () => (
       { id: 'section-4', label: 'Examples' },
     ]}
   />
-);
-Default.description = 'A sidebar navigation with section links that highlight on scroll.';
+)
+Default.description = 'A sidebar navigation with section links that highlight on scroll.'

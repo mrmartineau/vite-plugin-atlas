@@ -3,22 +3,14 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 import path from 'node:path'
 import { extractProps } from '../plugin/props-extractor.js'
 import { extractSources } from '../plugin/source-extractor.js'
-import type {
-  AtlasComponentEntry,
-  ResolvedAtlasConfig,
-} from '../types/index.js'
+import type { AtlasComponentEntry, ResolvedAtlasConfig } from '../types/index.js'
 
 function sendJson(res: ServerResponse, data: unknown, status = 200) {
   res.writeHead(status, { 'Content-Type': 'application/json' })
   res.end(JSON.stringify(data, null, 2))
 }
 
-function sendText(
-  res: ServerResponse,
-  text: string,
-  contentType: string,
-  status = 200,
-) {
+function sendText(res: ServerResponse, text: string, contentType: string, status = 200) {
   res.writeHead(status, { 'Content-Type': contentType })
   res.end(text)
 }
@@ -47,10 +39,7 @@ export async function handleApiRequest(
 
   // GET /api/all.json
   if (apiPath === '/api/all.json') {
-    const url = new URL(
-      req.url || '/',
-      `http://${req.headers.host || 'localhost'}`,
-    )
+    const url = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`)
     const componentsParam = url.searchParams.get('components')
     let filtered = manifest
 
@@ -187,10 +176,7 @@ export async function handleApiRequest(
     // Include docs file content if available
     if (entry.docsFile) {
       try {
-        const docsContent = await fs.readFile(
-          path.join(root, entry.docsFile),
-          'utf-8',
-        )
+        const docsContent = await fs.readFile(path.join(root, entry.docsFile), 'utf-8')
         md += `## Documentation\n\n${docsContent}\n`
       } catch {
         // Skip if docs file can't be read

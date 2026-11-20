@@ -36,11 +36,7 @@ export class ErrorBoundary extends Component<Props, State> {
           <pre className="atlas-error-card__message">
             {this.state.error?.message ?? 'Unknown error'}
           </pre>
-          <button
-            type="button"
-            className="atlas-error-card__retry"
-            onClick={this.handleRetry}
-          >
+          <button type="button" className="atlas-error-card__retry" onClick={this.handleRetry}>
             Retry
           </button>
         </div>

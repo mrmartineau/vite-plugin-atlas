@@ -2,6 +2,23 @@
   "name": "vite-plugin-atlas",
   "version": "0.3.0",
   "description": "A convention-driven component documentation plugin for Vite + React",
+  "keywords": [
+    "atlas",
+    "components",
+    "documentation",
+    "react",
+    "vite",
+    "vite-plugin"
+  ],
+  "license": "MIT",
+  "bin": {
+    "atlas": "./dist/cli/index.js"
+  },
+  "files": [
+    "dist",
+    "src/ui",
+    "ATLAS_SKILL.md"
+  ],
   "type": "module",
   "main": "./dist/plugin/index.js",
   "module": "./dist/plugin/index.js",
@@ -20,34 +37,38 @@
       "import": "./dist/ui/index.js"
     }
   },
-  "bin": {
-    "atlas": "./dist/cli/index.js"
-  },
-  "files": [
-    "dist",
-    "src/ui",
-    "ATLAS_SKILL.md"
-  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write .",
-    "format": "biome format --write .",
+    "lint": "oxlint && oxfmt --check",
+    "lint:fix": "oxlint --fix && oxfmt",
+    "format": "oxfmt",
     "test": "vitest run",
     "test:watch": "vitest",
     "release": "release-it"
   },
-  "keywords": [
-    "vite",
-    "vite-plugin",
-    "react",
-    "documentation",
-    "components",
-    "atlas"
-  ],
-  "license": "MIT",
+  "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
+    "radix-ui": "^1.4.3",
+    "shiki": "^3.23.0",
+    "tinyglobby": "^0.2.15"
+  },
+  "devDependencies": {
+    "@mrmartineau/kit": "^1.1.0",
+    "@types/node": "^25.3.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "oxfmt": "^0.79.0",
+    "oxlint": "^1.94.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "release-it": "^19.2.4",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vitest": "^4.0.18"
+  },
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18",
@@ -57,24 +78,5 @@
     "typescript": {
       "optional": true
     }
-  },
-  "dependencies": {
-    "@phosphor-icons/react": "^2.1.10",
-    "radix-ui": "^1.4.3",
-    "shiki": "^3.23.0",
-    "tinyglobby": "^0.2.15"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "2.4.4",
-    "@types/node": "^25.3.0",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "release-it": "^19.2.4",
-    "tsup": "^8.5.1",
-    "typescript": "^5.9.3",
-    "vite": "^7.3.1",
-    "vitest": "^4.0.18"
   }
 }

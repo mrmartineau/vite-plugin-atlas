@@ -23,11 +23,9 @@
   --atlas-radius-sm: 4px;
   --atlas-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
   --atlas-shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
-  --atlas-font:
-    "Geist", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --atlas-font: 'Geist', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --atlas-font-mono:
-    "Geist Mono", "SFMono-Regular", "Cascadia Code", "Fira Code", Consolas,
-    monospace;
+    'Geist Mono', 'SFMono-Regular', 'Cascadia Code', 'Fira Code', Consolas, monospace;
   --atlas-header-height: 56px;
   --atlas-sidebar-width: 220px;
 

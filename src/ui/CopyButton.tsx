@@ -26,11 +26,7 @@ export function CopyButton({ text, className, children }: CopyButtonProps) {
       onClick={handleCopy}
       title="Copy to clipboard"
     >
-      {copied ? (
-        <CheckIcon size={14} weight="duotone" />
-      ) : (
-        <CopyIcon size={14} weight="duotone" />
-      )}{' '}
+      {copied ? <CheckIcon size={14} weight="duotone" /> : <CopyIcon size={14} weight="duotone" />}{' '}
       {children && <span>{copied ? 'Copied!' : children}</span>}
     </button>
   )

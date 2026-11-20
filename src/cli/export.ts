@@ -1,10 +1,7 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { generateContext } from '../api/context-generator.js'
-import {
-  serializeComponent,
-  serializeManifest,
-} from '../api/json-serializers.js'
+import { serializeComponent, serializeManifest } from '../api/json-serializers.js'
 import { extractProps } from '../plugin/props-extractor.js'
 import { extractSources } from '../plugin/source-extractor.js'
 import type { AtlasContext } from './vite-boot.js'
@@ -12,10 +9,7 @@ import type { AtlasContext } from './vite-boot.js'
 /**
  * `atlas export [--outdir dir]` — Export static JSON/markdown files.
  */
-export async function runExport(
-  ctx: AtlasContext,
-  outdir: string,
-): Promise<void> {
+export async function runExport(ctx: AtlasContext, outdir: string): Promise<void> {
   const { manifest, root, config } = ctx
 
   const apiDir = path.join(outdir, 'api')
@@ -65,10 +59,7 @@ export async function runExport(
     let docsContent: string | null = null
     if (entry.docsFile) {
       try {
-        docsContent = await fs.readFile(
-          path.join(root, entry.docsFile),
-          'utf-8',
-        )
+        docsContent = await fs.readFile(path.join(root, entry.docsFile), 'utf-8')
       } catch {
         // Skip if docs file can't be read
       }

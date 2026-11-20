@@ -29,9 +29,7 @@ export function PropsTable({ props }: PropsTableProps) {
                 <code>{prop.type}</code>
               </td>
               <td>{prop.required ? 'Yes' : 'No'}</td>
-              <td>
-                {prop.default !== undefined ? <code>{prop.default}</code> : '—'}
-              </td>
+              <td>{prop.default !== undefined ? <code>{prop.default}</code> : '—'}</td>
               <td>{prop.description || '—'}</td>
             </tr>
           ))}

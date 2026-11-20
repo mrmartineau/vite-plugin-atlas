@@ -6,10 +6,7 @@ import type { AtlasProp } from '../types/index.js'
 /**
  * Try to resolve a module specifier to an actual file path.
  */
-async function resolveModulePath(
-  specifier: string,
-  fromDir: string,
-): Promise<string | null> {
+async function resolveModulePath(specifier: string, fromDir: string): Promise<string | null> {
   if (!specifier.startsWith('.') && !specifier.startsWith('/')) {
     return null // Skip bare/node_modules specifiers
   }
@@ -62,9 +59,7 @@ function parseImports(
     content,
     ts.ScriptTarget.Latest,
     true,
-    filePath.endsWith('.tsx') || filePath.endsWith('.jsx')
-      ? ts.ScriptKind.TSX
-      : ts.ScriptKind.TS,
+    filePath.endsWith('.tsx') || filePath.endsWith('.jsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
   )
 
   const imports: Array<{ specifier: string; names: string[] }> = []
@@ -146,10 +141,7 @@ async function findComponentFile(
 /**
  * Extract JSDoc comment text from a node's leading comments.
  */
-function getJSDocDescription(
-  node: ts.Node,
-  _sourceFile: ts.SourceFile,
-): string {
+function getJSDocDescription(node: ts.Node, _sourceFile: ts.SourceFile): string {
   const jsdocs = ts.getJSDocCommentsAndTags(node)
   for (const jsdoc of jsdocs) {
     if (ts.isJSDoc(jsdoc) && jsdoc.comment) {
@@ -168,10 +160,7 @@ function getJSDocDescription(
 /**
  * Extract the type string from a type node.
  */
-function typeToString(
-  typeNode: ts.TypeNode | undefined,
-  sourceFile: ts.SourceFile,
-): string {
+function typeToString(typeNode: ts.TypeNode | undefined, sourceFile: ts.SourceFile): string {
   if (!typeNode) return 'unknown'
   return typeNode.getText(sourceFile)
 }
@@ -228,10 +217,7 @@ function extractDefaultValues(
       if (ts.isFunctionDeclaration(node)) {
         params = node.parameters
       } else if (ts.isVariableDeclaration(node) && node.initializer) {
-        if (
-          ts.isArrowFunction(node.initializer) ||
-          ts.isFunctionExpression(node.initializer)
-        ) {
+        if (ts.isArrowFunction(node.initializer) || ts.isFunctionExpression(node.initializer)) {
           params = node.initializer.parameters
         }
       }
@@ -245,8 +231,7 @@ function extractDefaultValues(
               element.initializer &&
               ts.isIdentifier(element.name)
             ) {
-              defaults[element.name.text] =
-                element.initializer.getText(sourceFile)
+              defaults[element.name.text] = element.initializer.getText(sourceFile)
             }
           }
         }
@@ -268,11 +253,7 @@ export async function extractProps(
   componentName: string,
   root: string,
 ): Promise<AtlasProp[]> {
-  const componentFile = await findComponentFile(
-    examplesFilePath,
-    componentName,
-    root,
-  )
+  const componentFile = await findComponentFile(examplesFilePath, componentName, root)
   if (!componentFile) return []
 
   // Skip JS files without type annotations
@@ -299,10 +280,7 @@ export async function extractProps(
   const propsTypeName = `${componentName}Props`
 
   for (const statement of sourceFile.statements) {
-    if (
-      ts.isInterfaceDeclaration(statement) &&
-      statement.name.text === propsTypeName
-    ) {
+    if (ts.isInterfaceDeclaration(statement) && statement.name.text === propsTypeName) {
       const props = extractPropsFromTypeMembers(statement.members, sourceFile)
       const defaults = extractDefaultValues(sourceFile, componentName)
       return props.map((p) => ({
@@ -316,10 +294,7 @@ export async function extractProps(
       statement.name.text === propsTypeName &&
       ts.isTypeLiteralNode(statement.type)
     ) {
-      const props = extractPropsFromTypeMembers(
-        statement.type.members,
-        sourceFile,
-      )
+      const props = extractPropsFromTypeMembers(statement.type.members, sourceFile)
       const defaults = extractDefaultValues(sourceFile, componentName)
       return props.map((p) => ({
         ...p,
@@ -330,25 +305,15 @@ export async function extractProps(
 
   // Strategy 2: Look for the function component and get its first parameter type
   for (const statement of sourceFile.statements) {
-    const modifiers = ts.canHaveModifiers(statement)
-      ? ts.getModifiers(statement)
-      : undefined
-    const isExported = modifiers?.some(
-      (m) => m.kind === ts.SyntaxKind.ExportKeyword,
-    )
+    const modifiers = ts.canHaveModifiers(statement) ? ts.getModifiers(statement) : undefined
+    const isExported = modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword)
 
     if (!isExported) continue
 
-    if (
-      ts.isFunctionDeclaration(statement) &&
-      statement.name?.text === componentName
-    ) {
+    if (ts.isFunctionDeclaration(statement) && statement.name?.text === componentName) {
       const firstParam = statement.parameters[0]
       if (firstParam?.type && ts.isTypeLiteralNode(firstParam.type)) {
-        const props = extractPropsFromTypeMembers(
-          firstParam.type.members,
-          sourceFile,
-        )
+        const props = extractPropsFromTypeMembers(firstParam.type.members, sourceFile)
         const defaults = extractDefaultValues(sourceFile, componentName)
         return props.map((p) => ({
           ...p,
@@ -372,10 +337,7 @@ export async function extractProps(
             stmt.name.text === typeName &&
             ts.isTypeLiteralNode(stmt.type)
           ) {
-            const props = extractPropsFromTypeMembers(
-              stmt.type.members,
-              sourceFile,
-            )
+            const props = extractPropsFromTypeMembers(stmt.type.members, sourceFile)
             const defaults = extractDefaultValues(sourceFile, componentName)
             return props.map((p) => ({
               ...p,
@@ -389,11 +351,7 @@ export async function extractProps(
     // Check variable declarations for arrow/function components
     if (ts.isVariableStatement(statement)) {
       for (const decl of statement.declarationList.declarations) {
-        if (
-          ts.isIdentifier(decl.name) &&
-          decl.name.text === componentName &&
-          decl.initializer
-        ) {
+        if (ts.isIdentifier(decl.name) && decl.name.text === componentName && decl.initializer) {
           const init = decl.initializer
           let params: ts.NodeArray<ts.ParameterDeclaration> | undefined
 
@@ -404,10 +362,7 @@ export async function extractProps(
           if (params && params.length > 0) {
             const firstParam = params[0]
             if (firstParam.type && ts.isTypeLiteralNode(firstParam.type)) {
-              const props = extractPropsFromTypeMembers(
-                firstParam.type.members,
-                sourceFile,
-              )
+              const props = extractPropsFromTypeMembers(firstParam.type.members, sourceFile)
               const defaults = extractDefaultValues(sourceFile, componentName)
               return props.map((p) => ({
                 ...p,
@@ -417,18 +372,9 @@ export async function extractProps(
             if (firstParam.type && ts.isTypeReferenceNode(firstParam.type)) {
               const typeName = firstParam.type.typeName.getText(sourceFile)
               for (const stmt of sourceFile.statements) {
-                if (
-                  ts.isInterfaceDeclaration(stmt) &&
-                  stmt.name.text === typeName
-                ) {
-                  const props = extractPropsFromTypeMembers(
-                    stmt.members,
-                    sourceFile,
-                  )
-                  const defaults = extractDefaultValues(
-                    sourceFile,
-                    componentName,
-                  )
+                if (ts.isInterfaceDeclaration(stmt) && stmt.name.text === typeName) {
+                  const props = extractPropsFromTypeMembers(stmt.members, sourceFile)
+                  const defaults = extractDefaultValues(sourceFile, componentName)
                   return props.map((p) => ({
                     ...p,
                     default: defaults[p.name] ?? p.default,
@@ -439,14 +385,8 @@ export async function extractProps(
                   stmt.name.text === typeName &&
                   ts.isTypeLiteralNode(stmt.type)
                 ) {
-                  const props = extractPropsFromTypeMembers(
-                    stmt.type.members,
-                    sourceFile,
-                  )
-                  const defaults = extractDefaultValues(
-                    sourceFile,
-                    componentName,
-                  )
+                  const props = extractPropsFromTypeMembers(stmt.type.members, sourceFile)
+                  const defaults = extractDefaultValues(sourceFile, componentName)
                   return props.map((p) => ({
                     ...p,
                     default: defaults[p.name] ?? p.default,
@@ -462,10 +402,7 @@ export async function extractProps(
 
   // Strategy 3: Look for any `Props` type in the file
   for (const statement of sourceFile.statements) {
-    if (
-      ts.isInterfaceDeclaration(statement) &&
-      statement.name.text === 'Props'
-    ) {
+    if (ts.isInterfaceDeclaration(statement) && statement.name.text === 'Props') {
       const props = extractPropsFromTypeMembers(statement.members, sourceFile)
       const defaults = extractDefaultValues(sourceFile, componentName)
       return props.map((p) => ({
@@ -478,10 +415,7 @@ export async function extractProps(
       statement.name.text === 'Props' &&
       ts.isTypeLiteralNode(statement.type)
     ) {
-      const props = extractPropsFromTypeMembers(
-        statement.type.members,
-        sourceFile,
-      )
+      const props = extractPropsFromTypeMembers(statement.type.members, sourceFile)
       const defaults = extractDefaultValues(sourceFile, componentName)
       return props.map((p) => ({
         ...p,

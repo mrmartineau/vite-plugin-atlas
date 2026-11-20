@@ -1,5 +1,5 @@
-import { config } from 'virtual:atlas-config'
 import { useEffect, useRef, useState } from 'react'
+import { config } from 'virtual:atlas-config'
 
 interface IframePreviewProps {
   file: string

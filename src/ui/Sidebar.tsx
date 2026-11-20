@@ -46,9 +46,7 @@ export function Sidebar({ items }: SidebarProps) {
               href={`#${item.id}`}
               onClick={(e) => {
                 e.preventDefault()
-                document
-                  .getElementById(item.id)
-                  ?.scrollIntoView({ behavior: 'smooth' })
+                document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth' })
               }}
             >
               {item.label}

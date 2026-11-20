@@ -72,9 +72,7 @@ async function main() {
         process.exit(1)
     }
   } catch (err) {
-    process.stderr.write(
-      `Error: ${err instanceof Error ? err.message : String(err)}\n`,
-    )
+    process.stderr.write(`Error: ${err instanceof Error ? err.message : String(err)}\n`)
     process.exit(1)
   }
 }
