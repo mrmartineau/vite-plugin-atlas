@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/security/noDangerouslySetInnerHtml: it's ok for our purpose */
+/* oxlint-disable react/no-danger -- it's ok for our purpose */
 import { config } from 'virtual:atlas-config'
 import {
   ArrowLeftIcon,

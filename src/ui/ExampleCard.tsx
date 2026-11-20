@@ -43,7 +43,7 @@ export function ExampleCard({
           {highlightedSource ? (
             <div
               className="atlas-example-card__code"
-              // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+              // <explanation>
               dangerouslySetInnerHTML={{ __html: highlightedSource }}
             />
           ) : (

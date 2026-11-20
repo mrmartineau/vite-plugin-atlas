@@ -159,7 +159,7 @@ export default function atlas(userConfig: AtlasConfig = {}): Plugin[] {
         const mod = ctx.server.moduleGraph.getModuleById(docsModuleId)
         if (mod) {
           ctx.server.moduleGraph.invalidateModule(mod)
-          // biome-ignore lint/suspicious/noExplicitAny: Vite's ModuleNode[] typing is complex
+          // oxlint-disable-next-line typescript/no-explicit-any -- Vite's ModuleNode[] typing is complex
           return [...(ctx.modules || []), mod] as any
         }
         return
@@ -190,7 +190,7 @@ export default function atlas(userConfig: AtlasConfig = {}): Plugin[] {
         }
       }
 
-      // biome-ignore lint/suspicious/noExplicitAny: Vite's ModuleNode[] typing is complex
+      // oxlint-disable-next-line typescript/no-explicit-any -- Vite's ModuleNode[] typing is complex
       return [
         ...(ctx.modules || []),
         ...modulesToInvalidate.filter(Boolean),

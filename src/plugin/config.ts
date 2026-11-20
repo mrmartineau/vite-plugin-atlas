@@ -2,7 +2,7 @@ import type { AtlasConfig, ResolvedAtlasConfig } from '../types/index.js'
 
 const COMMON_ALIAS_KEYS = ['@/', '@components/', '~/', '@src/']
 
-// biome-ignore lint/suspicious/noExplicitAny: Vite's ResolvedConfig has complex alias types
+// oxlint-disable-next-line typescript/no-explicit-any -- Vite's ResolvedConfig has complex alias types
 export function resolveConfig(
   userConfig: AtlasConfig = {},
   viteConfig?: any,
