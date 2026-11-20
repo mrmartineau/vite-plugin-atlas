@@ -1,14 +1,14 @@
-import { type ReactNode } from 'react';
+import { type ReactNode } from 'react'
 
 export interface CardProps {
   /** Card title displayed at the top */
-  title: string;
+  title: string
   /** Optional description text */
-  description?: string;
+  description?: string
   /** Card body content */
-  children?: ReactNode;
+  children?: ReactNode
   /** Optional footer content */
-  footer?: ReactNode;
+  footer?: ReactNode
 }
 
 export function Card({ title, description, children, footer }: CardProps) {
@@ -42,5 +42,5 @@ export function Card({ title, description, children, footer }: CardProps) {
         </div>
       )}
     </div>
-  );
+  )
 }

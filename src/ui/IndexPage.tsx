@@ -37,9 +37,7 @@ export function IndexPage({ manifest, title }: IndexPageProps) {
       <div className="atlas-index__content">
         {Object.keys(grouped).length === 0 && (
           <div className="atlas-index__empty">
-            {search
-              ? 'No components match your search.'
-              : 'No components discovered yet.'}
+            {search ? 'No components match your search.' : 'No components discovered yet.'}
           </div>
         )}
         <div className="atlas-group-wrapper">
@@ -47,11 +45,7 @@ export function IndexPage({ manifest, title }: IndexPageProps) {
             <ToggleGroup key={group} label={group} count={entries.length}>
               <div className="atlas-group__grid">
                 {entries.map((entry) => (
-                  <a
-                    key={entry.slug}
-                    className="atlas-card"
-                    href={`#/${entry.slug}`}
-                  >
+                  <a key={entry.slug} className="atlas-card" href={`#/${entry.slug}`}>
                     <LazyPreview entry={entry} />
                     <div className="atlas-card__info">
                       <div className="atlas-card__name">{entry.name}</div>

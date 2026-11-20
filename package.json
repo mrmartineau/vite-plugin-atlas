@@ -2,6 +2,23 @@
   "name": "vite-plugin-atlas",
   "version": "0.3.0",
   "description": "A convention-driven component documentation plugin for Vite + React",
+  "keywords": [
+    "atlas",
+    "components",
+    "documentation",
+    "react",
+    "vite",
+    "vite-plugin"
+  ],
+  "license": "MIT",
+  "bin": {
+    "atlas": "./dist/cli/index.js"
+  },
+  "files": [
+    "dist",
+    "src/ui",
+    "ATLAS_SKILL.md"
+  ],
   "type": "module",
   "main": "./dist/plugin/index.js",
   "module": "./dist/plugin/index.js",
@@ -20,14 +37,6 @@
       "import": "./dist/ui/index.js"
     }
   },
-  "bin": {
-    "atlas": "./dist/cli/index.js"
-  },
-  "files": [
-    "dist",
-    "src/ui",
-    "ATLAS_SKILL.md"
-  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
@@ -38,25 +47,6 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "release": "release-it"
-  },
-  "keywords": [
-    "vite",
-    "vite-plugin",
-    "react",
-    "documentation",
-    "components",
-    "atlas"
-  ],
-  "license": "MIT",
-  "peerDependencies": {
-    "react": ">=18",
-    "react-dom": ">=18",
-    "vite": ">=5"
-  },
-  "peerDependenciesMeta": {
-    "typescript": {
-      "optional": true
-    }
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
@@ -78,5 +68,15 @@
     "typescript": "^5.9.3",
     "vite": "^7.3.1",
     "vitest": "^4.0.18"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18",
+    "vite": ">=5"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
   }
 }

@@ -1,18 +1,18 @@
 export interface InputProps {
   /** Input label */
-  label: string;
+  label: string
   /** Placeholder text */
-  placeholder?: string;
+  placeholder?: string
   /** Input type */
-  type?: 'text' | 'email' | 'password' | 'number';
+  type?: 'text' | 'email' | 'password' | 'number'
   /** Current value */
-  value?: string;
+  value?: string
   /** Change handler */
-  onChange?: (value: string) => void;
+  onChange?: (value: string) => void
   /** Whether the input is disabled */
-  disabled?: boolean;
+  disabled?: boolean
   /** Error message to display */
-  error?: string;
+  error?: string
 }
 
 export function Input({
@@ -44,5 +44,5 @@ export function Input({
       />
       {error && <span style={{ fontSize: '0.75rem', color: '#dc2626' }}>{error}</span>}
     </div>
-  );
+  )
 }

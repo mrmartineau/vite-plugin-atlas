@@ -8,26 +8,19 @@ import type { AtlasContext } from './vite-boot.js'
 /**
  * `atlas context <name> [name...]` — Output component context for AI consumption.
  */
-export async function runContext(
-  ctx: AtlasContext,
-  names: string[],
-): Promise<void> {
+export async function runContext(ctx: AtlasContext, names: string[]): Promise<void> {
   const { manifest, root, config } = ctx
 
   const outputs: string[] = []
 
   for (const name of names) {
     const entry = manifest.find(
-      (e) =>
-        e.name.toLowerCase() === name.toLowerCase() ||
-        e.slug === name.toLowerCase(),
+      (e) => e.name.toLowerCase() === name.toLowerCase() || e.slug === name.toLowerCase(),
     )
 
     if (!entry) {
       const available = manifest.map((e) => e.name).join(', ')
-      process.stderr.write(
-        `Component '${name}' not found. Available: ${available}\n`,
-      )
+      process.stderr.write(`Component '${name}' not found. Available: ${available}\n`)
       process.exit(1)
     }
 
@@ -54,10 +47,7 @@ export async function runContext(
     let docsContent: string | null = null
     if (entry.docsFile) {
       try {
-        docsContent = await fs.readFile(
-          path.join(root, entry.docsFile),
-          'utf-8',
-        )
+        docsContent = await fs.readFile(path.join(root, entry.docsFile), 'utf-8')
       } catch {
         // Skip if docs file can't be read
       }

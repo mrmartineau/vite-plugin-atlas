@@ -34,24 +34,16 @@ export async function runValidate(filePath: string): Promise<void> {
     content,
     ts.ScriptTarget.Latest,
     true,
-    filePath.endsWith('.tsx') || filePath.endsWith('.jsx')
-      ? ts.ScriptKind.TSX
-      : ts.ScriptKind.TS,
+    filePath.endsWith('.tsx') || filePath.endsWith('.jsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
   )
 
   const exportNames: string[] = []
   let hasDefaultExport = false
 
   for (const statement of sourceFile.statements) {
-    const modifiers = ts.canHaveModifiers(statement)
-      ? ts.getModifiers(statement)
-      : undefined
-    const isExported = modifiers?.some(
-      (m) => m.kind === ts.SyntaxKind.ExportKeyword,
-    )
-    const isDefault = modifiers?.some(
-      (m) => m.kind === ts.SyntaxKind.DefaultKeyword,
-    )
+    const modifiers = ts.canHaveModifiers(statement) ? ts.getModifiers(statement) : undefined
+    const isExported = modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword)
+    const isDefault = modifiers?.some((m) => m.kind === ts.SyntaxKind.DefaultKeyword)
 
     if (isExported && isDefault) {
       hasDefaultExport = true
@@ -140,10 +132,7 @@ export async function runValidate(filePath: string): Promise<void> {
 function unwrapCallExpression(node: ts.Expression): ts.Expression {
   if (ts.isCallExpression(node)) {
     const firstArg = node.arguments[0]
-    if (
-      firstArg &&
-      (ts.isArrowFunction(firstArg) || ts.isFunctionExpression(firstArg))
-    ) {
+    if (firstArg && (ts.isArrowFunction(firstArg) || ts.isFunctionExpression(firstArg))) {
       return firstArg
     }
   }
@@ -158,13 +147,9 @@ function kindToLabel(node: ts.Node): string {
   if (ts.isArrayLiteralExpression(node)) return 'array'
   if (ts.isStringLiteral(node)) return 'string'
   if (ts.isNumericLiteral(node)) return 'number'
-  if (
-    node.kind === ts.SyntaxKind.TrueKeyword ||
-    node.kind === ts.SyntaxKind.FalseKeyword
-  )
+  if (node.kind === ts.SyntaxKind.TrueKeyword || node.kind === ts.SyntaxKind.FalseKeyword)
     return 'boolean'
   if (ts.isCallExpression(node)) return 'call expression'
-  if (ts.isTemplateExpression(node) || ts.isNoSubstitutionTemplateLiteral(node))
-    return 'string'
+  if (ts.isTemplateExpression(node) || ts.isNoSubstitutionTemplateLiteral(node)) return 'string'
   return 'expression'
 }

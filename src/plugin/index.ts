@@ -1,18 +1,10 @@
 import path from 'node:path'
 import type { Plugin, ViteDevServer } from 'vite'
 import { handleApiRequest } from '../api/routes.js'
-import type {
-  AtlasComponentEntry,
-  AtlasConfig,
-  ResolvedAtlasConfig,
-} from '../types/index.js'
+import type { AtlasComponentEntry, AtlasConfig, ResolvedAtlasConfig } from '../types/index.js'
 import { resolveConfig } from './config.js'
 import { discoverExamples } from './discovery.js'
-import {
-  getUiDir,
-  loadVirtualModule,
-  resolveVirtualModuleId,
-} from './virtual-modules.js'
+import { getUiDir, loadVirtualModule, resolveVirtualModuleId } from './virtual-modules.js'
 
 export default function atlas(userConfig: AtlasConfig = {}): Plugin[] {
   let config: ResolvedAtlasConfig
@@ -98,14 +90,7 @@ export default function atlas(userConfig: AtlasConfig = {}): Plugin[] {
 
         if (atlasPath.startsWith('/api/')) {
           try {
-            const handled = await handleApiRequest(
-              req,
-              res,
-              atlasPath,
-              manifest,
-              root,
-              config,
-            )
+            const handled = await handleApiRequest(req, res, atlasPath, manifest, root, config)
             if (handled) return
           } catch (err) {
             console.error('[atlas] API error:', err)
@@ -176,11 +161,7 @@ export default function atlas(userConfig: AtlasConfig = {}): Plugin[] {
       const propsModuleId = `\0virtual:atlas-props/${entry.slug}`
       const manifestModuleId = '\0virtual:atlas-manifest'
 
-      const modulesToInvalidate = [
-        sourceModuleId,
-        propsModuleId,
-        manifestModuleId,
-      ]
+      const modulesToInvalidate = [sourceModuleId, propsModuleId, manifestModuleId]
         .map((id) => ctx.server.moduleGraph.getModuleById(id))
         .filter(Boolean)
 
@@ -191,10 +172,7 @@ export default function atlas(userConfig: AtlasConfig = {}): Plugin[] {
       }
 
       // oxlint-disable-next-line typescript/no-explicit-any -- Vite's ModuleNode[] typing is complex
-      return [
-        ...(ctx.modules || []),
-        ...modulesToInvalidate.filter(Boolean),
-      ] as any
+      return [...(ctx.modules || []), ...modulesToInvalidate.filter(Boolean)] as any
     },
   }
 
@@ -210,9 +188,7 @@ function isDocsFile(relativePath: string): boolean {
 }
 
 function invalidateVirtualModules(server: ViteDevServer) {
-  const manifestModule = server.moduleGraph.getModuleById(
-    '\0virtual:atlas-manifest',
-  )
+  const manifestModule = server.moduleGraph.getModuleById('\0virtual:atlas-manifest')
   if (manifestModule) {
     server.moduleGraph.invalidateModule(manifestModule)
   }

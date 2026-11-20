@@ -20,9 +20,7 @@ function dedent(text: string): string {
 
   if (minIndent === 0) return text
 
-  return lines
-    .map((line) => (line.trim().length === 0 ? '' : line.slice(minIndent)))
-    .join('\n')
+  return lines.map((line) => (line.trim().length === 0 ? '' : line.slice(minIndent))).join('\n')
 }
 
 /**
@@ -38,11 +36,7 @@ function getColumn(sourceText: string, pos: number): number {
  * This handles expression bodies where the first line has no leading whitespace
  * but subsequent lines retain their original file indentation.
  */
-function sliceAndDedent(
-  sourceText: string,
-  start: number,
-  end: number,
-): string {
+function sliceAndDedent(sourceText: string, start: number, end: number): string {
   const text = sourceText.slice(start, end)
   const col = getColumn(sourceText, start)
   if (col === 0) return text
@@ -84,10 +78,7 @@ function extractFunctionSource(node: ts.Node, sourceText: string): string {
   // Unwrap call expressions like example(() => ..., { ... })
   if (ts.isCallExpression(node)) {
     const firstArg = node.arguments[0]
-    if (
-      firstArg &&
-      (ts.isArrowFunction(firstArg) || ts.isFunctionExpression(firstArg))
-    ) {
+    if (firstArg && (ts.isArrowFunction(firstArg) || ts.isFunctionExpression(firstArg))) {
       return extractFunctionSource(firstArg, sourceText)
     }
     // Fallback for HOCs, forwardRef, etc.
@@ -129,10 +120,7 @@ function extractBlockBody(block: ts.Block, sourceText: string): string {
 
   const firstStatement = block.statements[0]
   const lastStatement = block.statements[block.statements.length - 1]
-  const bodyText = sourceText.slice(
-    firstStatement.getStart(),
-    lastStatement.getEnd(),
-  )
+  const bodyText = sourceText.slice(firstStatement.getStart(), lastStatement.getEnd())
   return dedent(bodyText)
 }
 
@@ -152,26 +140,17 @@ function transformImports(
   imports: string,
   filePath: string,
   importPrefix: string | null,
-  importPackage:
-    | string
-    | ((importPath: string, examplesFile: string) => string)
-    | null,
+  importPackage: string | ((importPath: string, examplesFile: string) => string) | null,
   viteAliases: Record<string, string>,
 ): string {
-  if (
-    !importPrefix &&
-    !importPackage &&
-    Object.keys(viteAliases).length === 0
-  ) {
+  if (!importPrefix && !importPackage && Object.keys(viteAliases).length === 0) {
     return imports
   }
 
   const lines = imports.split('\n')
   return lines
     .map((line) => {
-      const match = line.match(
-        /^(import\s+.+\s+from\s+['"])([^'"]+)(['"];?\s*)$/,
-      )
+      const match = line.match(/^(import\s+.+\s+from\s+['"])([^'"]+)(['"];?\s*)$/)
       if (!match) return line
 
       const [, prefix, specifier, suffix] = match
@@ -183,9 +162,7 @@ function transformImports(
 
       if (importPackage) {
         const replacement =
-          typeof importPackage === 'function'
-            ? importPackage(specifier, filePath)
-            : importPackage
+          typeof importPackage === 'function' ? importPackage(specifier, filePath) : importPackage
         return `${prefix}${replacement}${suffix}`
       }
 
@@ -205,11 +182,7 @@ function transformImports(
     .join('\n')
 }
 
-const FILTERED_IMPORT_MODULES = new Set([
-  'react',
-  'react-dom',
-  'react/jsx-runtime',
-])
+const FILTERED_IMPORT_MODULES = new Set(['react', 'react-dom', 'react/jsx-runtime'])
 
 /**
  * Extract source code and imports from an examples file.
@@ -218,10 +191,7 @@ export function extractSources(
   filePath: string,
   fileContent: string,
   importPrefix: string | null,
-  importPackage:
-    | string
-    | ((importPath: string, examplesFile: string) => string)
-    | null = null,
+  importPackage: string | ((importPath: string, examplesFile: string) => string) | null = null,
   viteAliases: Record<string, string> = {},
 ): AtlasSource {
   const sourceFile = ts.createSourceFile(
@@ -229,9 +199,7 @@ export function extractSources(
     fileContent,
     ts.ScriptTarget.Latest,
     true,
-    filePath.endsWith('.tsx') || filePath.endsWith('.jsx')
-      ? ts.ScriptKind.TSX
-      : ts.ScriptKind.TS,
+    filePath.endsWith('.tsx') || filePath.endsWith('.jsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
   )
 
   const sources: Record<string, string> = {}
@@ -243,26 +211,17 @@ export function extractSources(
       const specifier = statement.moduleSpecifier
       if (ts.isStringLiteral(specifier)) {
         const mod = specifier.text
-        if (
-          FILTERED_IMPORT_MODULES.has(mod) ||
-          mod.startsWith('vite-plugin-atlas')
-        ) {
+        if (FILTERED_IMPORT_MODULES.has(mod) || mod.startsWith('vite-plugin-atlas')) {
           continue
         }
       }
-      importStatements.push(
-        fileContent.slice(statement.getStart(), statement.getEnd()),
-      )
+      importStatements.push(fileContent.slice(statement.getStart(), statement.getEnd()))
       continue
     }
 
     // Check for exported declarations
-    const modifiers = ts.canHaveModifiers(statement)
-      ? ts.getModifiers(statement)
-      : undefined
-    const isExported = modifiers?.some(
-      (m) => m.kind === ts.SyntaxKind.ExportKeyword,
-    )
+    const modifiers = ts.canHaveModifiers(statement) ? ts.getModifiers(statement) : undefined
+    const isExported = modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword)
 
     if (!isExported) continue
 
@@ -280,13 +239,7 @@ export function extractSources(
   }
 
   const rawImports = importStatements.join('\n')
-  const imports = transformImports(
-    rawImports,
-    filePath,
-    importPrefix,
-    importPackage,
-    viteAliases,
-  )
+  const imports = transformImports(rawImports, filePath, importPrefix, importPackage, viteAliases)
 
   return { sources, imports }
 }

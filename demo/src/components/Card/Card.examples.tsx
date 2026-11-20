@@ -1,9 +1,11 @@
-import type { AtlasExample } from 'vite-plugin-atlas/types';
-import { Button } from '../Button/Button';
-import { Card } from './Card';
+import type { AtlasExample } from 'vite-plugin-atlas/types'
+import { Button } from '../Button/Button'
+import { Card } from './Card'
 
-export const Basic: AtlasExample = () => <Card title="Getting Started" description="Learn the basics of our platform." />;
-Basic.description = 'A minimal card with just a title and description.';
+export const Basic: AtlasExample = () => (
+  <Card title="Getting Started" description="Learn the basics of our platform." />
+)
+Basic.description = 'A minimal card with just a title and description.'
 
 export const WithContent: AtlasExample = () => (
   <Card title="Team Members" description="Manage your team.">
@@ -13,8 +15,8 @@ export const WithContent: AtlasExample = () => (
       <li>Charlie — Viewer</li>
     </ul>
   </Card>
-);
-WithContent.description = 'Cards can render any content in their body, such as lists or forms.';
+)
+WithContent.description = 'Cards can render any content in their body, such as lists or forms.'
 
 export const WithFooter: AtlasExample = () => (
   <Card
@@ -22,10 +24,14 @@ export const WithFooter: AtlasExample = () => (
     description="You're on the free tier. Upgrade to unlock more features."
     footer={
       <div style={{ display: 'flex', gap: '8px' }}>
-        <Button variant="primary" size="sm">Upgrade</Button>
-        <Button variant="secondary" size="sm">Learn More</Button>
+        <Button variant="primary" size="sm">
+          Upgrade
+        </Button>
+        <Button variant="secondary" size="sm">
+          Learn More
+        </Button>
       </div>
     }
   />
-);
-WithFooter.description = 'The footer slot is ideal for action buttons or metadata.';
+)
+WithFooter.description = 'The footer slot is ideal for action buttons or metadata.'

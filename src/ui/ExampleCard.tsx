@@ -28,9 +28,7 @@ export function ExampleCard({
       <div className="atlas-example-card__header">
         <h3 className="atlas-example-card__title">{displayTitle}</h3>
       </div>
-      {description && (
-        <p className="atlas-example-card__description">{description}</p>
-      )}
+      {description && <p className="atlas-example-card__description">{description}</p>}
       <div className="atlas-example-card__preview">
         <IframePreview file={examplesFile} exportName={name} />
       </div>
